@@ -30,6 +30,8 @@ if (state_code == 3) { # RS
 source('utils.r')
 
 title = paste('Rate of fatal work-related accidents -', get_state_acronym(state_code))
+title_twolines = paste('Rate of fatal work-related\naccidents -', get_state_acronym(state_code))
+
 # Loads data
 data = load_mortality_data(state_code, initial_year, n_forecast)
 data$diff = diff(data$forecast) # First difference
@@ -40,19 +42,19 @@ catn(title)
 # pdf(paste('plots',get_state_acronym(state_code),'series.pdf', sep='_'))
 
 # Margins order: bottom, left, top, right
-original_margins = par()$mar # save the original margins for plotting
+original_parameters = par() # save the original margins for plotting
 
 ###########################
 ##   Visual inspection   ##
 ###########################
 catn('Visual inspection')
 
-# svg(paste('plot_original',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=4, pointsize=12)
+# svg(paste('plot_original',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=2.5, pointsize=12)
 # suppressMessages(library(forecast)) # Needed to ggplot2 autoplot support ts (Hyndman and Khandakar, 2008)
 # ggplot2::autoplot(data$forecast, xlab = "Years", ylab = title)
-par(mar=c(4.2, 4.2, 1, 2)) # Reduce margins
-plot(data$forecast, xlab = "Years", ylab = title)
-par(mar=original_margins) # Restore margins
+par(mar=c(3.5, 4, 1, 2), mgp=c(1.8,0.6,0)) # Reduce margins
+plot(data$forecast, xlab = "Years", ylab = title_twolines)
+par(mar=original_parameters$mar, mgp=original_parameters$mgp) # Restore margins
 # tryCatch(dev.off(), error=function(e){}) # close the SVG file if it was opened
 
 # Decomposing time series
@@ -71,11 +73,16 @@ title("Decompose first difference")
 # ACF and PACF plots
 
 acf_data <- forecast::Acf(data$forecast, plot=FALSE)
-# We do not plot the ACF with lag=0 as it is always 1
-plot(acf_data[2:length(acf_data$acf)-1], ylab=paste("ACF -", get_state_acronym(state_code)))
-
 pacf_data <- forecast::Pacf(data$forecast, plot=FALSE)
-plot(pacf_data, ylab=paste("PACF -", get_state_acronym(state_code)))
+
+
+# svg(paste('plot_acf_pacf',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=2.3, pointsize=12)
+par(mfrow=c(1,2),mar=c(3, 3, 1, 1), mgp=c(1.5,0.6,0))
+# We do not plot the ACF with lag=0 as it is always 1
+plot(acf_data[2:length(acf_data$acf)-1], main='', ylab=paste('ACF -', get_state_acronym(state_code)))
+plot(pacf_data, main='', ylab=paste('PACF -', get_state_acronym(state_code)))
+par(mfrow=original_parameters$mfrow, mar=original_parameters$mar, mgp=original_parameters$mgp) # Restore margins
+# tryCatch(dev.off(), error=function(e){}) # close the SVG file if it was opened
 
 
 ###########################
@@ -149,7 +156,7 @@ mortality_karma = forecast_mortality_karma(data, karma_model_order, initial_year
 
 ### Out-sample plot ###
 
-# svg(paste('plot_out_sample',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=4, pointsize=12)
+# svg(paste('plot_out_sample',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=3, pointsize=12)
 
 line_legend = c("original", "ARIMA", "ßARMA", "KARMA")
 line_colors = c("black","red","blue","green")
@@ -158,6 +165,7 @@ initial_year_plot = 2016
 out_sample_plot_data <- load_mortality_data(state_code, initial_year_plot, n_forecast)
 n_plot_data = length(out_sample_plot_data$ts)
 end_year_plot = end(out_sample_plot_data$ts)[1]
+out_sample_ylim = c(0.04, 0.12)
 
 # We take the last value before forecast and put together with the forecast data to join the lines
 last_data_before_forecasts = as.data.frame(out_sample_plot_data$ts)[(n_plot_data-n_forecast):(n_plot_data-n_forecast),1]
@@ -173,14 +181,15 @@ ts_karma_forecast_plot <- ts(
 
 tss_to_plot = ts.union(out_sample_plot_data$ts, ts_arima_forecast_plot, ts_barma_forecast_plot, ts_karma_forecast_plot)
 
-par(mar=c(4, 4.2, 1, 1)) # Reduce margins
+par(mar=c(2.5, 4.2, 1, 1), mgp=c(2,0.6,0)) # Reduce margins
 plot(tss_to_plot,
   plot.type = "single",
-  ylab = title,
+  ylab = title_twolines,
   xlab = "",
   main = "",
   lty = 1:length(line_colors), col = line_colors,
-  axes = FALSE # we'll make the axis ourselves
+  axes = FALSE, # we'll make the axis ourselves
+  ylim = out_sample_ylim
 )
 legend("bottomleft",
   legend = line_legend,
@@ -199,20 +208,20 @@ for (year_tick in initial_year_plot:end_year_plot) {
 }
 axis(1, labels=paste("dec",end_year_plot,sep="/"), at=(end_year_plot+0.9))
 box() # box surrounding plot
-par(mar=original_margins) # Restore margins
+par(mar=original_parameters$mar, mgp=original_parameters$mgp) # Restore margins
 
 # tryCatch(dev.off(), error=function(e){}) # close the SVG file if it was opened
 
 
 ### In-sample plot ###
 
-# svg(paste('plot_in_sample',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=4, pointsize=12)
+# svg(paste('plot_in_sample',get_state_acronym(state_code),'series.svg', sep='_'), width=10, height=3.5, pointsize=12)
 
 tss_to_plot = ts.union(data$ts, mortality_arima$model$fitted, mortality_barma$fitted, mortality_karma$fitted)
 initial_year_plot = start(data$ts)[1]
 end_year_plot = end(data$ts)[1]
 
-par(mar=c(4, 4.2, 1, 1)) # Reduce margins
+par(mar=c(2.5, 3.4, 1, 1), mgp=c(2,0.6,0)) # Reduce margins
 plot(tss_to_plot,
   plot.type = "single",
   ylab = title,
@@ -236,7 +245,7 @@ for (year_tick in seq(initial_year_plot, end_year_plot, by=2)) {
   axis(1, labels=year_tick, at=year_tick)
 }
 box() # box surrounding plot
-par(mar=original_margins) # Restore margins
+par(mar=original_parameters$mar, mgp=original_parameters$mgp) # Restore margins
 
 # tryCatch(dev.off(), error=function(e){}) # close the SVG file if it was opened
 
@@ -247,14 +256,36 @@ par(mar=original_margins) # Restore margins
 catn(''); # line break
 catn('Accuracy measurements')
 
+arima_accuracy = forecast::accuracy(mortality_arima$forecast$mean, data$validate)
+barma_accuracy = forecast::accuracy(mortality_barma$forecast, data$validate)
+karma_accuracy = forecast::accuracy(mortality_karma$forecast, data$validate)
+
 catn('ARIMA accuracy measurements:')
-print(forecast::accuracy(mortality_arima$forecast$mean, data$validate))
+print(arima_accuracy)
 
 catn('ßARMA accuracy measurements:')
-print(forecast::accuracy(mortality_barma$forecast, data$validate))
+print(barma_accuracy)
 
 catn('KARMA accuracy measurements:')
-print(forecast::accuracy(mortality_karma$forecast, data$validate))
+print(karma_accuracy)
+
+pct_decimal = 1
+idx_rmse = 2
+idx_mae = 3
+idx_mape = 5
+
+catn('ßARMA vs ARIMA:')
+catn(paste('RMSE',round(((barma_accuracy[idx_rmse]/arima_accuracy[idx_rmse])-1)*100,pct_decimal),'%'))
+catn(paste('MAE',round(((barma_accuracy[idx_mae]/arima_accuracy[idx_mae])-1)*100,pct_decimal),'%'))
+catn(paste('MAPE',round(((barma_accuracy[idx_mape]/arima_accuracy[idx_mape])-1)*100,pct_decimal),'%'))
+catn('KARMA vs ARIMA:')
+catn(paste('RMSE',round(((karma_accuracy[idx_rmse]/arima_accuracy[idx_rmse])-1)*100,pct_decimal),'%'))
+catn(paste('MAE',round(((karma_accuracy[idx_mae]/arima_accuracy[idx_mae])-1)*100,pct_decimal),'%'))
+catn(paste('MAPE',round(((karma_accuracy[idx_mape]/arima_accuracy[idx_mape])-1)*100,pct_decimal),'%'))
+catn('ßARMA vs KARMA:')
+catn(paste('RMSE',round(((barma_accuracy[idx_rmse]/karma_accuracy[idx_rmse])-1)*100,pct_decimal),'%'))
+catn(paste('MAE',round(((barma_accuracy[idx_mae]/karma_accuracy[idx_mae])-1)*100,pct_decimal),'%'))
+catn(paste('MAPE',round(((barma_accuracy[idx_mape]/karma_accuracy[idx_mape])-1)*100,pct_decimal),'%'))
 
 
 ###########################
