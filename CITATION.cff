@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+authors:
+  - family-names: Melchior
+    given-names: Cristiane
+    orcid: "https://orcid.org/0000-0002-4119-5962"
+    alias: crmelchior
+  - family-names: Guerra
+    given-names: "Renata Rojas"
+    orcid: "https://orcid.org/0000-0002-6476-8276"
+  - family-names: Rockenbach
+    given-names: "Dinei A."
+    orcid: "https://orcid.org/0000-0002-2091-9626"
+    alias: dineiar
+title: "Implementations for Forecasting Brazilian mortality rates due to occupational accidents using autoregressive moving average approaches"
+message: "Please cite this software using the metadata from 'preferred-citation'."
+date-released: "2020-07-20"
+preferred-citation:
+  authors:
+    - family-names: Melchior
+      given-names: Cristiane
+      orcid: "https://orcid.org/0000-0002-4119-5962"
+      alias: crmelchior
+    - family-names: Zanini
+      given-names: "Roselaine Ruviaro"
+      orcid: "https://orcid.org/0000-0002-0533-2384"
+    - family-names: Guerra
+      given-names: "Renata Rojas"
+      orcid: "https://orcid.org/0000-0002-6476-8276"
+    - family-names: Rockenbach
+      given-names: "Dinei A."
+      orcid: "https://orcid.org/0000-0002-2091-9626"
+      alias: dineiar
+  abstract: "We examine the mortality rates due to occupational accidents of the three states in the southern region of Brazil using the autoregressive integrated moving average (ARIMA), beta autoregressive moving average (βARMA), and Kumaraswamy autoregressive moving average (KARMA) models to fit the data sets, considering monthly observations from 2000 to 2017. We compare them to identify the best predictive model for the southern region of Brazil. We also provide descriptive analysis, revealing the victims’ vulnerability characteristics and comparing them between the states. A clear increase was seen in female participation in the labor market, but the number of deaths from occupational accidents did not increase by the same proportion. Moreover, the state of Paraná stood out for having the highest mortality rate from work-related accidents. The fitted ARIMA and βARMA models using a 6-month time frame presented similar accuracy measurements, while KARMA performed the worst."
+  identifiers:
+    - type: doi
+      value: 10.1016/j.ijforecast.2020.09.010
+    - type: url
+      value: "https://www.sciencedirect.com/science/article/abs/pii/S0169207020301515"
+  type: article
+  title: "Forecasting Brazilian mortality rates due to occupational accidents using autoregressive moving average approaches"
+  journal: "International Journal of Forecasting"
+  year: 2021
+  issue: 2
+  volume: 37
+  pages: 13
+  date-published: "2020-10-23"
+  repository-code: "https://github.com/crmelchior/forecasting_south_brazil_mortality_work_accidents"
