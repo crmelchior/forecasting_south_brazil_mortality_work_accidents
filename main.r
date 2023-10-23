@@ -130,7 +130,6 @@ source('forecast_barma.r')
 # https://github.com/vscher/barma
 source('barma/barma.fit.r')
 source('barma/barma.r')
-source('barma/best.barma.r')
 
 # Forecasts ßARMA and prints results
 mortality_barma = forecast_mortality_barma(data, barma_model_order, initial_year, n_forecast, diff_order, verbose)
@@ -144,7 +143,6 @@ source('forecast_karma.r')
 source('karma/kum-mu-phi.r')
 source('karma/karma.fit.r')
 source('karma/karma.r')
-source('karma/best.karma.r')
 
 # Forecasts KARMA and prints results
 mortality_karma = forecast_mortality_karma(data, karma_model_order, initial_year, n_forecast, diff_order, verbose)

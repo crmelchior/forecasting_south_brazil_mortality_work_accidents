@@ -1,4 +1,6 @@
 
+#source('best/best.karma.r')
+
 forecast_mortality_karma <- function (data, karma_model_order, initial_year, n_forecast = 6, diff_order = 1, verbose = TRUE) {
   if (verbose) {
     catn(paste('Using KARMA(ar=',toString(karma_model_order$ar),', ma=',toString(karma_model_order$ma),

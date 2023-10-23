@@ -1,4 +1,6 @@
 
+#source('best/best.barma.r')
+
 forecast_mortality_barma <- function (data, barma_model_order, initial_year, n_forecast = 6, diff_order = 1, verbose = TRUE) {
   if (verbose) {
     catn(paste('Using ßARMA(ar=',toString(barma_model_order$ar),', ma=',toString(barma_model_order$ma),
